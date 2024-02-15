@@ -55,3 +55,5 @@ app.UseHttpsRedirection();
 app.UseExceptionHandler();
 
 app.Run();
+
+public abstract partial class Program { } // for tests

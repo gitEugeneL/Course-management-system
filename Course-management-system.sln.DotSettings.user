@@ -1,0 +1,14 @@
+﻿<wpf:ResourceDictionary xml:space="preserve" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:s="clr-namespace:System;assembly=mscorlib" xmlns:ss="urn:shemas-jetbrains-com:settings-storage-xaml" xmlns:wpf="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
+	<s:String x:Key="/Default/Environment/AssemblyExplorer/XmlDocument/@EntryValue">&lt;AssemblyExplorer&gt;
+  &lt;Assembly Path="/home/lihon/.nuget/packages/fluentassertions/6.12.0/lib/net6.0/FluentAssertions.dll" /&gt;
+&lt;/AssemblyExplorer&gt;</s:String>
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=375322e7_002D9fc1_002D4b74_002Da3ff_002D6ca253797e48/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="CreateUser_withValidBody_ReturnsCreatedResult" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;
+  &lt;TestAncestor&gt;
+    &lt;TestId&gt;xUnit::7B4F0261-3D40-43C5-B001-A8768D2389BB::net8.0::API.IntegrationTests.UserEndpointsTests&lt;/TestId&gt;
+  &lt;/TestAncestor&gt;
+&lt;/SessionState&gt;</s:String>
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=82216e8f_002D38ea_002D4bb8_002Da619_002D2a57e8af9336/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="CreateUser_withValidBody_ReturnsCreatedResult #2" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;
+  &lt;TestAncestor&gt;
+    &lt;TestId&gt;xUnit::7B4F0261-3D40-43C5-B001-A8768D2389BB::net8.0::API.IntegrationTests.UserEndpointsTests.CreateUser_withValidBody_ReturnsCreatedResul&lt;/TestId&gt;
+  &lt;/TestAncestor&gt;
+&lt;/SessionState&gt;</s:String></wpf:ResourceDictionary>

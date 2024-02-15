@@ -20,6 +20,8 @@ public static class UserEndpoints
             .WithValidator<CreateUserDto>()
             .Produces<UserResponseDto>(StatusCodes.Status201Created)
             .Produces(StatusCodes.Status409Conflict);
+
+        userGroup.MapGet("", () => TypedResults.Ok());
     }
     
     private static async Task<Results<Created<UserResponseDto>, Conflict<string>>> CreateUser(
