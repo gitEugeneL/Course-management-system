@@ -4,11 +4,32 @@
 &lt;/AssemblyExplorer&gt;</s:String>
 	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=375322e7_002D9fc1_002D4b74_002Da3ff_002D6ca253797e48/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="CreateUser_withValidBody_ReturnsCreatedResult" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;
   &lt;TestAncestor&gt;
-    &lt;TestId&gt;xUnit::7B4F0261-3D40-43C5-B001-A8768D2389BB::net8.0::API.IntegrationTests.UserEndpointsTests&lt;/TestId&gt;
+    &lt;TestId&gt;xUnit::7B4F0261-3D40-43C5-B001-A8768D2389BB::net8.0::API.IntegrationTests.Endpoints.AuthEndpointsTests&lt;/TestId&gt;
   &lt;/TestAncestor&gt;
 &lt;/SessionState&gt;</s:String>
-	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=82216e8f_002D38ea_002D4bb8_002Da619_002D2a57e8af9336/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="CreateUser_withValidBody_ReturnsCreatedResult #2" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=3d836bd4_002D1533_002D4f22_002D8b83_002D70431e7195ff/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="Refresh_withValidRefreshToken_ReturnsOkResult #2" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;
   &lt;TestAncestor&gt;
-    &lt;TestId&gt;xUnit::7B4F0261-3D40-43C5-B001-A8768D2389BB::net8.0::API.IntegrationTests.UserEndpointsTests.CreateUser_withValidBody_ReturnsCreatedResul&lt;/TestId&gt;
+    &lt;TestId&gt;xUnit::7B4F0261-3D40-43C5-B001-A8768D2389BB::net8.0::API.IntegrationTests.Endpoints.AuthEndpointsTests.Refresh_withValidRefreshToken_ReturnsOkResult&lt;/TestId&gt;
+  &lt;/TestAncestor&gt;
+&lt;/SessionState&gt;</s:String>
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=42771679_002Ddee8_002D4db1_002D92b1_002Dad95f4b84e36/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="Login_withValidUser_ReturnsOkResult" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;
+  &lt;TestAncestor&gt;
+    &lt;TestId&gt;xUnit::7B4F0261-3D40-43C5-B001-A8768D2389BB::net8.0::API.IntegrationTests.Endpoints.AuthEndpointsTests.Login_withValidUser_ReturnsOkResult&lt;/TestId&gt;
+    &lt;TestId&gt;xUnit::7B4F0261-3D40-43C5-B001-A8768D2389BB::net8.0::API.IntegrationTests.Endpoints.AuthEndpointsTests.Refresh_withValidRefreshToken_ReturnsOkResult&lt;/TestId&gt;
+  &lt;/TestAncestor&gt;
+&lt;/SessionState&gt;</s:String>
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=628a878b_002Da35b_002D4ba0_002D9412_002D97d96c0879ea/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="Refresh_withValidRefreshToken_ReturnsOkResult" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;
+  &lt;TestAncestor&gt;
+    &lt;TestId&gt;xUnit::7B4F0261-3D40-43C5-B001-A8768D2389BB::net8.0::API.IntegrationTests.Endpoints.AuthEndpointsTests.Refresh_withValidRefreshToken_ReturnsOkResult&lt;/TestId&gt;
+  &lt;/TestAncestor&gt;
+&lt;/SessionState&gt;</s:String>
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=82216e8f_002D38ea_002D4bb8_002Da619_002D2a57e8af9336/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="CreateUser_withValidBody_ReturnsCreatedResult #2" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;
+  &lt;TestAncestor&gt;
+    &lt;TestId&gt;xUnit::7B4F0261-3D40-43C5-B001-A8768D2389BB::net8.0::API.IntegrationTests.Endpoints.AuthEndpointsTests.Refresh_withValidRefreshToken_ReturnsOkResult&lt;/TestId&gt;
+  &lt;/TestAncestor&gt;
+&lt;/SessionState&gt;</s:String>
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=eecff3f0_002D75e5_002D4950_002Dad3b_002D84fec4271ad2/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="Refresh_withValidRefreshToken_ReturnsOkResult #3" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;
+  &lt;TestAncestor&gt;
+    &lt;TestId&gt;xUnit::7B4F0261-3D40-43C5-B001-A8768D2389BB::net8.0::API.IntegrationTests.Endpoints.AuthEndpointsTests&lt;/TestId&gt;
   &lt;/TestAncestor&gt;
 &lt;/SessionState&gt;</s:String></wpf:ResourceDictionary>

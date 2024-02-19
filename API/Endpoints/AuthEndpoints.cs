@@ -79,7 +79,7 @@ public static class AuthEndpoints
         user.RefreshTokens.Add(refreshToken);
         await repository.UpdateUser(user);
         
-        return TypedResults.Ok(new LoginResponseDto(accessToken, refreshToken));
+        return TypedResults.Ok(new LoginResponseDto(accessToken, refreshToken.Token, refreshToken.Expires));
     }
 
     private static async Task<Results<UnauthorizedHttpResult, Ok<LoginResponseDto>>> Refresh(
@@ -102,7 +102,7 @@ public static class AuthEndpoints
         user.RefreshTokens.Add(refreshToken);
         await repository.UpdateUser(user);
 
-        return TypedResults.Ok(new LoginResponseDto(accessToken, refreshToken));
+        return TypedResults.Ok(new LoginResponseDto(accessToken, refreshToken.Token, refreshToken.Expires));
     }
 
     private static async Task<Results<UnauthorizedHttpResult, NoContent>> Logout(
