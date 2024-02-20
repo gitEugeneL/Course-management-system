@@ -1,6 +1,6 @@
 using FluentValidation;
 
-namespace API.Models.Dto.Users;
+namespace API.Dto.Users;
 
 public sealed record CreateUserDto(
     string Email,

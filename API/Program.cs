@@ -1,8 +1,12 @@
+using System.Security.Claims;
 using System.Text;
+using API.Data.Enums;
 using API.Data.Persistence;
+using API.Dto;
+using API.Dto.Auth;
+using API.Dto.Courses;
+using API.Dto.Users;
 using API.Endpoints;
-using API.Models.Dto.Auth;
-using API.Models.Dto.Users;
 using API.Repositories;
 using API.Repositories.Interfaces;
 using API.Security;
@@ -24,9 +28,28 @@ builder.Services
     .AddScoped<IPasswordManager, PasswordManager>()
     .AddScoped<ITokenManager, TokenManager>()
     .AddScoped<IUserRepository, UserRepository>()
+    .AddScoped<ICourseRepository, CourseRepository>()
     .AddScoped<IValidator<LoginDto>, LoginValidator>()
     .AddScoped<IValidator<RefreshDto>, RefreshValidator>()
-    .AddScoped<IValidator<CreateUserDto>, CreateUserValidator>();
+    .AddScoped<IValidator<CreateUserDto>, CreateUserValidator>()
+    .AddScoped<IValidator<CreateCourseDto>, CreateCourseValidator>();
+
+/*** Database connection ***/
+builder.Services.AddDbContext<AppDbContext>(options =>
+    options.UseSqlite(builder.Configuration.GetConnectionString("SQLite")));
+
+/*** Swagger configuration ***/
+builder.Services.AddSwaggerGen(c =>
+{
+    c.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
+    {
+        Description = "JWT Bearer Authorization with refresh token. Example: Bearer {your access token....}",
+        In = ParameterLocation.Header,
+        Name = "Authorization",
+        Type = SecuritySchemeType.ApiKey
+    });
+    c.OperationFilter<SecurityRequirementsOperationFilter>();
+});
 
 /*** JWT  auth configuration ***/
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -44,26 +67,23 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         };
     });
 
-/*** Swagger configuration ***/
-builder.Services.AddSwaggerGen(c =>
-{
-    c.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
-    {
-        Description = "JWT Bearer Authorization with refresh token. Example: Bearer {your access token....}",
-        In = ParameterLocation.Header,
-        Name = "Authorization",
-        Type = SecuritySchemeType.ApiKey
-    });
-    c.OperationFilter<SecurityRequirementsOperationFilter>();
-});
+/*** Auth policies ***/
+builder.Services.AddAuthorizationBuilder()
+    .AddPolicy("professor-policy", policy =>
+        policy
+            .RequireRole(Role.Professor.ToString())
+            .RequireClaim(ClaimTypes.Email)
+            .RequireClaim(ClaimTypes.NameIdentifier))
+    .AddPolicy("student-policy", policy =>
+        policy
+            .RequireRole(Role.Student.ToString())
+            .RequireClaim(ClaimTypes.Email)
+            .RequireClaim(ClaimTypes.NameIdentifier)
+    );
 
 /*** Global exception handler ***/
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 builder.Services.AddProblemDetails();
-
-/*** Database connection ***/
-builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlite(builder.Configuration.GetConnectionString("SQLite")));
 
 var app = builder.Build();
 
@@ -73,6 +93,7 @@ app.UseSwaggerUI();
 /*** Add Endpoints ***/
 app.MapAuthEndpoints();
 app.MapUserEndpoints();
+app.MapCourseEndpoints();
 
 app.UseHttpsRedirection();
 

@@ -8,7 +8,9 @@ namespace API.Data.Persistence;
 public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(options)
 {
     public required DbSet<User> Users { get; init; }
-    
+    public required DbSet<Course> Courses { get; init; }
+    public required DbSet<Participant> Participants { get; init; }
+
     protected override void OnModelCreating(ModelBuilder builder)
     {
         builder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());

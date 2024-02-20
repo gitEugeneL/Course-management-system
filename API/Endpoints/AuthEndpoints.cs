@@ -1,7 +1,7 @@
 using API.Data.Entities;
 using API.Data.Enums;
-using API.Models.Dto.Auth;
-using API.Models.Dto.Users;
+using API.Dto.Auth;
+using API.Dto.Users;
 using API.Repositories.Interfaces;
 using API.Security.Interfaces;
 using API.Utils;
@@ -43,7 +43,7 @@ public static class AuthEndpoints
         IPasswordManager pwdManager,
         IUserRepository repository)
     {
-        if (await repository.UserExists(dto.Email))
+        if (await repository.UserExist(dto.Email))
             return TypedResults.Conflict($"User: {dto.Email} already exists");
         
         pwdManager.CreatePasswordHash(dto.Password, out var hash, out var salt);

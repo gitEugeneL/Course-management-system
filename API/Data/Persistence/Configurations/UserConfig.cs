@@ -40,5 +40,9 @@ internal class UserConfig : IEntityTypeConfiguration<User>
         builder.HasMany(u => u.RefreshTokens)
             .WithOne(rt => rt.User)
             .HasForeignKey(rt => rt.UserId);
+
+        builder.HasMany(u => u.Participants)
+            .WithOne(p => p.User)
+            .HasForeignKey(p => p.UserId);
     }
 }

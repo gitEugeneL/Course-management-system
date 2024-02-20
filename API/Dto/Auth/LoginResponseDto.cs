@@ -1,4 +1,4 @@
-namespace API.Models.Dto.Auth;
+namespace API.Dto.Auth;
 
 public sealed class LoginResponseDto(string accessToken, string refreshToken, DateTime refreshTokenExpires)
 {

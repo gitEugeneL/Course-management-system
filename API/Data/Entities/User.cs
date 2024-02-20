@@ -23,4 +23,5 @@ public sealed class User(
 
     /*** Relations ***/
     public List<RefreshToken> RefreshTokens { get; init; } = [];
+    public List<Participant> Participants { get; init; } = [];
 }

@@ -16,7 +16,7 @@ public class UserRepository(AppDbContext context) : IUserRepository
             .SaveChangesAsync() > 0;
     }
 
-    public async Task<bool> UserExists(string email)
+    public async Task<bool> UserExist(string email)
     {
         return await context
             .Users

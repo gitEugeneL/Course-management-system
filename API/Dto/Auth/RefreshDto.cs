@@ -1,6 +1,6 @@
 using FluentValidation;
 
-namespace API.Models.Dto.Auth;
+namespace API.Dto.Auth;
 
 public sealed record RefreshDto(string RefreshToken);
 

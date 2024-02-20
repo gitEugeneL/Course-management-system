@@ -1,7 +1,7 @@
 using System.Text;
 using API.Data.Persistence;
-using API.Models.Dto.Auth;
-using API.Models.Dto.Users;
+using API.Dto.Auth;
+using API.Dto.Users;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;

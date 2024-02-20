@@ -1,6 +1,6 @@
 using API.Data.Entities;
 
-namespace API.Models.Dto.Users;
+namespace API.Dto.Users;
 
 public sealed class UserResponseDto(User user)
 {

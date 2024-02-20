@@ -1,7 +1,7 @@
 using System.Net;
 using System.Security.Cryptography;
-using API.Models.Dto.Auth;
-using API.Models.Dto.Users;
+using API.Dto.Auth;
+using API.Dto.Users;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Xunit;
