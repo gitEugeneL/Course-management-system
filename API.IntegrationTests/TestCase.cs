@@ -1,7 +1,6 @@
 using System.Text;
 using API.Data.Persistence;
 using API.Dto.Auth;
-using API.Dto.Users;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
@@ -28,26 +27,13 @@ public class TestCase
             })
             .CreateClient();
     }
-
-    protected readonly CreateUserDto User = new(
-        "student@test.con", 
-        "strongPwd", 
-        "Student1", 
-        "Student1", 
-        "45605");
-
+    
     protected static StringContent CreateContext(object o)
     {
         return new StringContent(
             JsonConvert.SerializeObject(o), Encoding.UTF8, "application/json");
     }
     
-    protected async Task<HttpResponseMessage> CreateUser(CreateUserDto dto)
-    {
-        var context = CreateContext(dto);
-        return await Client.PostAsync("api/auth/register", context);
-    }
-
     protected async Task<LoginResponseDto> Login(string email, string password)
     {
         var model = new LoginDto(email, password);

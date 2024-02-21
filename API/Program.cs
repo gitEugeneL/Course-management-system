@@ -86,6 +86,15 @@ builder.Services.AddProblemDetails();
 
 var app = builder.Build();
 
+
+/*** Init develop database data ***/
+if (app.Environment.IsDevelopment())
+{
+    using var scope = app.Services.CreateScope();
+    var context = scope.ServiceProvider.GetService<AppDbContext>()!;
+    DataInitializer.Init(context);
+}
+
 app.UseSwagger();
 app.UseSwaggerUI();
 
