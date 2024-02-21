@@ -5,6 +5,7 @@ using API.Repositories.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using API.Utils;
 using Microsoft.AspNetCore.Http.HttpResults;
+using CoursePaginatedRequest = API.Dto.Courses.CoursePaginatedRequest;
 
 namespace API.Endpoints;
 
@@ -22,25 +23,36 @@ public static class CourseEndpoints
             .Produces(StatusCodes.Status409Conflict);
 
         courseGroup.MapGet("", GetAllCoursesPaginated)
-            .RequireAuthorization("student-policy")
+            .RequireAuthorization()
             .Produces<PaginatedResponse<CourseResponseDto>>();
         
         courseGroup.MapGet("{courseName}", GetCourseByName)
             .RequireAuthorization("student-policy")
             .Produces<CourseResponseDto>()
             .Produces(StatusCodes.Status404NotFound);
+        
+        courseGroup.MapPut("", UpdateCourse)
+            .RequireAuthorization("professor-policy")
+            .WithValidator<UpdateCourseDto>()
+            .Produces<CourseResponseDto>()
+            .Produces(StatusCodes.Status404NotFound);
 
-        // todo update
+        courseGroup.MapDelete("{courseName}", DeleteCourse)
+            .RequireAuthorization("professor-policy")
+            .Produces(StatusCodes.Status204NoContent)
+            .Produces(StatusCodes.Status404NotFound);
+
+        courseGroup.MapPatch("join/{courseName}", Join)
+            .RequireAuthorization("student-policy")
+            .Produces(StatusCodes.Status200OK)
+            .Produces(StatusCodes.Status404NotFound)
+            .Produces(StatusCodes.Status409Conflict)
+            .Produces(StatusCodes.Status401Unauthorized);
         
-        // todo get all participants by course name
-        
-        // todo get available courses 
-        
-        // todo delete course
-        
-        // todo get my courses
-        
-        // todo join / leave
+        courseGroup.MapPatch("leave/{courseName}", Leave)
+            .RequireAuthorization("student-policy")
+            .Produces(StatusCodes.Status404NotFound)
+            .Produces(StatusCodes.Status401Unauthorized);
     }
     
     private static async Task<Results<Created<CourseResponseDto>, Conflict<string>>> CreateCourse(
@@ -59,14 +71,18 @@ public static class CourseEndpoints
     }
 
     private static async Task<IResult> GetAllCoursesPaginated(
-        [AsParameters] PaginatedRequest parameters,
+        [AsParameters] CoursePaginatedRequest parameters,
+        HttpContext httpContext,
         ICourseRepository repository)
     {
         var (courses, count) = await repository
             .GetAllCoursesPagination(
                 parameters.PageNumber, 
                 parameters.PageSize, 
-                parameters.SortByCreated);
+                parameters.SortByCreated,
+                parameters.SortByAvailableCourses,
+                parameters.SortByMyCourses,
+                BaseService.ReadUserIdFromToken(httpContext));
         
         return TypedResults.Ok(new PaginatedResponse<CourseResponseDto>(
             courses
@@ -77,7 +93,7 @@ public static class CourseEndpoints
             parameters.PageSize));
     }
     
-    private static async Task<IResult> GetCourseByName(
+    private static async Task<Results<Ok<CourseResponseDto>, NotFound<string>>> GetCourseByName(
         [FromRoute] string courseName,
         ICourseRepository repository)
     {
@@ -85,5 +101,79 @@ public static class CourseEndpoints
         return course is not null
             ? TypedResults.Ok(new CourseResponseDto(course))
             : TypedResults.NotFound($"Course {courseName} not found");
+    }
+
+    private static async Task<Results<Ok<CourseResponseDto>, NotFound<string>>> UpdateCourse(
+        [FromBody] UpdateCourseDto dto,
+        ICourseRepository repository)
+    {
+        var course = await repository.GetCourseById(dto.CourseId);
+        if (course is null)
+            return TypedResults.NotFound($"Course {dto.CourseId} not found");
+        
+        course.Description = dto.Description ?? course.Description;
+        course.MaxParticipants = dto.MaxParticipant ?? course.MaxParticipants;
+        course.Finalized = dto.Finalize ?? course.Finalized;
+        
+        await repository.UpdateCourse(course);
+        return TypedResults.Ok(new CourseResponseDto(course));
+    }
+
+    private static async Task<Results<NoContent, NotFound<string>>> DeleteCourse(
+        [FromRoute] string courseName,
+        ICourseRepository repository)
+    {
+        var course = await repository.GetCourseByName(courseName);
+        if (course is null)
+            return TypedResults.NotFound($"Course {courseName} not found");
+
+        await repository.DeleteCourseAndParticipants(course);
+        return TypedResults.NoContent();
+    }
+
+    private static async Task<Results<NotFound<string>, Conflict<string>, UnauthorizedHttpResult, Ok>> Join(
+        [FromRoute] string courseName,
+        HttpContext httpContext,
+        ICourseRepository courseRepository,
+        IUserRepository userRepository)
+    {
+        var course = await courseRepository.GetCourseByName(courseName);
+        if (course is null)
+            return TypedResults.NotFound($"Course {courseName} not found");
+
+        var currentUserId = BaseService.ReadUserIdFromToken(httpContext);
+        if (course.Participants.Any(p => p.UserId == currentUserId))
+            return TypedResults.Conflict("You're already in this course");
+
+        if (course.Participants.Count >= course.MaxParticipants || course.Finalized)
+            return TypedResults.Conflict("Course is full");
+        
+        var user = await userRepository.FindUserById(currentUserId);
+        if (user is null)
+            return TypedResults.Unauthorized();
+        
+        course.Participants.Add(new Participant { User = user, Course = course });
+        await courseRepository.UpdateCourse(course);
+        return TypedResults.Ok();
+    }
+    
+    private static async Task<Results<NotFound<string>, UnauthorizedHttpResult, Ok>> Leave(
+        [FromRoute] string courseName,
+        HttpContext httpContext,
+        ICourseRepository courseRepository,
+        IUserRepository userRepository)
+    {
+        var course = await courseRepository.GetCourseByName(courseName);
+        if (course is null)
+            return TypedResults.NotFound($"Course {courseName} not found");
+        
+        var currentUserId = BaseService.ReadUserIdFromToken(httpContext);
+        var participant = course.Participants.SingleOrDefault(p => p.UserId == currentUserId);
+        if (participant is null || course.Finalized)
+            return TypedResults.NotFound("You're not in this course");
+
+        course.Participants.Remove(participant);
+        await courseRepository.UpdateCourse(course);
+        return TypedResults.Ok();
     }
 }

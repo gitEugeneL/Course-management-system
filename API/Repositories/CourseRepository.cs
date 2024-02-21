@@ -16,6 +16,12 @@ internal class CourseRepository(AppDbContext context) : ICourseRepository
             .SaveChangesAsync() > 0;
     }
 
+    public async Task<bool> UpdateCourse(Course course)
+    {
+        context.Courses.Update(course);
+        return await context.SaveChangesAsync() > 0;
+    }
+
     public async Task<bool> CourseExist(string name)
     {
         return await context
@@ -33,10 +39,21 @@ internal class CourseRepository(AppDbContext context) : ICourseRepository
                 .Equals(name.ToLower()));
     }
 
+    public async Task<Course?> GetCourseById(Guid id)
+    {
+        return await context
+            .Courses
+            .Include(c => c.Participants)
+            .SingleOrDefaultAsync(c => c.Id == id);
+    }
+    
     public async Task<(IEnumerable<Course> List, int Count)> GetAllCoursesPagination(
         int pageNumber, 
         int pageSize, 
-        bool sortByCreated)
+        bool sortByCreated = false,
+        bool sortByAvailableCourses  = false,
+        bool sortByMyCourses = false,
+        Guid? userId = null)
     {
         var query = context
             .Courses
@@ -46,6 +63,14 @@ internal class CourseRepository(AppDbContext context) : ICourseRepository
         if (sortByCreated)
             query = query.OrderBy(c => c.Created);
 
+        if (sortByMyCourses)
+            query = query
+                .Where(c => c.Participants.Any(p => p.UserId == userId));
+        
+        if (sortByAvailableCourses)
+            query = query
+                .Where(c => c.Participants.Count < c.MaxParticipants);
+        
         var count = await query
             .CountAsync();
 
@@ -55,5 +80,22 @@ internal class CourseRepository(AppDbContext context) : ICourseRepository
             .ToListAsync();
 
         return (courses, count);
+    }
+
+    public async Task<bool> DeleteCourseAndParticipants(Course course)
+    {
+        var participantsToDelete = context
+            .Participants
+            .Where(p => p.CourseId == course.Id);
+        
+        context
+            .Participants
+            .RemoveRange(participantsToDelete);
+
+        context
+            .Courses
+            .Remove(course);
+
+        return await context.SaveChangesAsync() > 0;
     }
 }

@@ -10,10 +10,11 @@ public sealed class Course(
     ) : BaseAuditableEntity
 {
     public string Name { get; init; } = name;
-    public string Description { get; init; } = description;
-    public int MaxParticipants { get; init; } = maxParticipants;
+    public string Description { get; set; } = description;
+    public int MaxParticipants { get; set; } = maxParticipants;
     public Guid OwnerId { get; init; } = ownerId;
-
+    public bool Finalized { get; set; } = false;
+    
     /*** Relations ***/
     public List<Participant> Participants { get; init; } = [];
 }

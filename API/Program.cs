@@ -2,7 +2,6 @@ using System.Security.Claims;
 using System.Text;
 using API.Data.Enums;
 using API.Data.Persistence;
-using API.Dto;
 using API.Dto.Auth;
 using API.Dto.Courses;
 using API.Dto.Users;
@@ -32,7 +31,8 @@ builder.Services
     .AddScoped<IValidator<LoginDto>, LoginValidator>()
     .AddScoped<IValidator<RefreshDto>, RefreshValidator>()
     .AddScoped<IValidator<CreateUserDto>, CreateUserValidator>()
-    .AddScoped<IValidator<CreateCourseDto>, CreateCourseValidator>();
+    .AddScoped<IValidator<CreateCourseDto>, CreateCourseValidator>()
+    .AddScoped<IValidator<UpdateCourseDto>, UpdateCourseDtoValidator>();
 
 /*** Database connection ***/
 builder.Services.AddDbContext<AppDbContext>(options =>
@@ -78,8 +78,7 @@ builder.Services.AddAuthorizationBuilder()
         policy
             .RequireRole(Role.Student.ToString())
             .RequireClaim(ClaimTypes.Email)
-            .RequireClaim(ClaimTypes.NameIdentifier)
-    );
+            .RequireClaim(ClaimTypes.NameIdentifier));
 
 /*** Global exception handler ***/
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();

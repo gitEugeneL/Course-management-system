@@ -8,6 +8,8 @@ public interface IUserRepository
 
     Task<bool> UserExist(string email);
 
+    Task<User?> FindUserById(Guid id);
+    
     Task<User?> FindUserByEmail(string email);
 
     Task<User?> FindUserByRefreshToken(string refreshToken);

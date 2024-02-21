@@ -10,4 +10,5 @@ public sealed class CourseResponseDto(Course course)
     public string Description { get; init; } = course.Description;
     public int MaxParticipants { get; init; } = course.MaxParticipants;
     public int CountParticipants { get; init; } = course.Participants.Count;
+    public DateTime CreatedAt { get; init; } = course.Created;
 }

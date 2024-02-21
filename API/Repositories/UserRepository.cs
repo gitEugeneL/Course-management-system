@@ -24,6 +24,13 @@ public class UserRepository(AppDbContext context) : IUserRepository
                 .Equals(email.ToLower()));
     }
 
+    public async Task<User?> FindUserById(Guid id)
+    {
+        return await context
+            .Users
+            .SingleOrDefaultAsync(u => u.Id == id);
+    }
+
     public async Task<User?> FindUserByEmail(string email)
     {
         return await context
