@@ -9,9 +9,10 @@ using Xunit;
 
 namespace API.IntegrationTests.Endpoints;
 
-public class AuthEndpointsTests(WebApplicationFactory<Program> factory)
-    : TestCase(factory), IClassFixture<WebApplicationFactory<Program>>
+public class AuthEndpointsTests(WebApplicationFactory<Program> factory) : IClassFixture<WebApplicationFactory<Program>>
 {
+    private readonly HttpClient _client = TestCase.CreateTestHttpClient(factory, "authTestsDb");
+
     [Theory]
     [InlineData("test@email.com", "strongPwd!", "John", "Smith", "4568")]
     [InlineData("test2@email.com", "myPassword", "Emily", "Johnson", "AD123")]
@@ -20,8 +21,10 @@ public class AuthEndpointsTests(WebApplicationFactory<Program> factory)
     {
         // arrange
         var model = new CreateUserDto(email, password, firstName, lastName, universityNumber);
+
         // act
-        var response = await Client.PostAsync("api/auth/register", CreateContext(model));
+        var response = await _client.PostAsync("api/auth/register", TestCase.CreateContext(model));
+        
         // assert
         response.StatusCode.Should().Be(HttpStatusCode.Created);
     }
@@ -34,7 +37,8 @@ public class AuthEndpointsTests(WebApplicationFactory<Program> factory)
             DataInitializer.TestStudentEmail, "stringPwd", "test", "test", "4544");
         
         // act
-        var response = await Client.PostAsync("api/auth/register", CreateContext(model));
+        var response = await _client.PostAsync("api/auth/register", TestCase.CreateContext(model));
+        
         // assert
         response.StatusCode.Should().Be(HttpStatusCode.Conflict);
     }
@@ -44,8 +48,10 @@ public class AuthEndpointsTests(WebApplicationFactory<Program> factory)
     {
         // arrange
         var model = new LoginDto(DataInitializer.TestStudentEmail, DataInitializer.TestPassword);
+        
         // act
-        var response = await Client.PostAsync("api/auth/login", CreateContext(model));
+        var response = await _client.PostAsync("api/auth/login", TestCase.CreateContext(model));
+        
         // assert
         response.StatusCode.Should().Be(HttpStatusCode.OK);
     }
@@ -57,8 +63,10 @@ public class AuthEndpointsTests(WebApplicationFactory<Program> factory)
     {
         // arrange
         var model = new LoginDto(email, password);
+        
         // act
-        var response = await Client.PostAsync("api/auth/login", CreateContext(model));
+        var response = await _client.PostAsync("api/auth/login", TestCase.CreateContext(model));
+        
         // assert
         response.StatusCode.Should().Be(HttpStatusCode.NotFound);
     }
@@ -67,10 +75,12 @@ public class AuthEndpointsTests(WebApplicationFactory<Program> factory)
     public async Task Refresh_withValidRefreshToken_ReturnsOkResult()
     {
         // arrange
-        var loginResponse = await Login(DataInitializer.TestStudentEmail, DataInitializer.TestPassword);
+        var loginResponse = await TestCase.Login(_client, DataInitializer.TestStudentEmail, DataInitializer.TestPassword);
         var model = new RefreshDto(loginResponse.RefreshToken);
+        
         // act
-        var response = await Client.PostAsync("api/auth/refresh", CreateContext(model));
+        var response = await _client.PostAsync("api/auth/refresh", TestCase.CreateContext(model));
+        
         // assert
         response.StatusCode.Should().Be(HttpStatusCode.OK);
     }
@@ -80,8 +90,10 @@ public class AuthEndpointsTests(WebApplicationFactory<Program> factory)
     {
         // arrange
         var model = new RefreshDto(Convert.ToBase64String(RandomNumberGenerator.GetBytes(256)));
+        
         // act
-        var response = await Client.PostAsync("api/auth/refresh", CreateContext(model));
+        var response = await _client.PostAsync("api/auth/refresh", TestCase.CreateContext(model));
+        
         // assert
         response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
     }
@@ -90,10 +102,12 @@ public class AuthEndpointsTests(WebApplicationFactory<Program> factory)
     public async Task Logout_withValidRefreshToken_ReturnsNoContentResult()
     {
         // arrange
-        var loginResponse = await Login(DataInitializer.TestStudentEmail, DataInitializer.TestPassword);
+        var loginResponse = await TestCase.Login(_client, DataInitializer.TestStudentEmail, DataInitializer.TestPassword);
         var model = new RefreshDto(loginResponse.RefreshToken);
+        
         // act
-        var response = await Client.PostAsync("api/auth/logout", CreateContext(model));
+        var response = await _client.PostAsync("api/auth/logout", TestCase.CreateContext(model));
+        
         // assert
         response.StatusCode.Should().Be(HttpStatusCode.NoContent);
     }
@@ -103,8 +117,10 @@ public class AuthEndpointsTests(WebApplicationFactory<Program> factory)
     {
         // arrange
         var model = new RefreshDto(Convert.ToBase64String(RandomNumberGenerator.GetBytes(256)));
+        
         // act
-        var response = await Client.PostAsync("api/auth/logout", CreateContext(model));
+        var response = await _client.PostAsync("api/auth/logout", TestCase.CreateContext(model));
+        
         // assert
         response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
     }

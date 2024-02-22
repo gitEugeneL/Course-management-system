@@ -2,13 +2,26 @@ using API.Data.Entities;
 
 namespace API.Dto.Courses;
 
-public sealed class CourseResponseDto(Course course)
+public sealed class CourseResponseDto()
 {
-    public Guid CourseId { get; init; } = course.Id;
-    public Guid OwnerId { get; init; } = course.OwnerId;
-    public string Name { get; init; } = course.Name;
-    public string Description { get; init; } = course.Description;
-    public int MaxParticipants { get; init; } = course.MaxParticipants;
-    public int CountParticipants { get; init; } = course.Participants.Count;
-    public DateTime CreatedAt { get; init; } = course.Created;
+    public Guid CourseId { get; init; }
+    public Guid OwnerId { get; init; }
+    public string Name { get; init; } = string.Empty;
+    public string Description { get; init; } = string.Empty;
+    public int MaxParticipants { get; init; }
+    public int CountParticipants { get; init; }
+    public bool Finalized { get; init; } 
+    public DateTime CreatedAt { get; init; }
+    
+    public CourseResponseDto(Course course) : this()
+    {
+        CourseId = course.Id;
+        OwnerId = course.OwnerId;
+        Name = course.Name;
+        Description = course.Description;
+        MaxParticipants = course.MaxParticipants;
+        CountParticipants = course.Participants.Count;
+        Finalized = course.Finalized;
+        CreatedAt = course.Created;
+    }
 }

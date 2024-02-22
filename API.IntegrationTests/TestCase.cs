@@ -1,3 +1,4 @@
+using System.Net.Http.Headers;
 using System.Text;
 using API.Data.Persistence;
 using API.Dto.Auth;
@@ -7,37 +8,45 @@ using Newtonsoft.Json;
 
 namespace API.IntegrationTests;
 
-public class TestCase
+public static class TestCase
 {
-    protected readonly HttpClient Client;
-
-    protected TestCase(WebApplicationFactory<Program> factory)
+    public static HttpClient CreateTestHttpClient(WebApplicationFactory<Program> factory, string dbname)
     {
-        Client = factory
-            .WithWebHostBuilder(builder =>
+        return factory
+            .WithWebHostBuilder(builder => 
             {
                 builder.ConfigureServices(services =>
                 {
                     services.Remove(services.SingleOrDefault(service =>
                         service.ServiceType == typeof(DbContextOptions<AppDbContext>))!);
-                    
-                    services.AddDbContext<AppDbContext>(options => 
-                        options.UseInMemoryDatabase("InMemoryDb"));
+
+                    services.AddDbContext<AppDbContext>(options =>
+                        options.UseInMemoryDatabase(dbname));
                 });
             })
             .CreateClient();
     }
     
-    protected static StringContent CreateContext(object o)
+    public static async Task<T?> DeserializeResponse<T>(HttpResponseMessage response)
+    {
+        var jsonResponse = await response.Content.ReadAsStringAsync(); 
+        return JsonConvert.DeserializeObject<T>(jsonResponse);
+    }
+    
+    public static async Task<LoginResponseDto> Login(HttpClient client, string email, string password)
+    {
+        var model = new LoginDto(email, password);
+        var response = await client.PostAsync("api/auth/login", CreateContext(model));
+        var loginResponse = JsonConvert.DeserializeObject<LoginResponseDto>(await response.Content.ReadAsStringAsync())!;
+
+        client.DefaultRequestHeaders.Authorization = 
+            new AuthenticationHeaderValue("Bearer", loginResponse.AccessToken);
+        return loginResponse;
+    }
+    
+    public static StringContent CreateContext(object o)
     {
         return new StringContent(
             JsonConvert.SerializeObject(o), Encoding.UTF8, "application/json");
-    }
-    
-    protected async Task<LoginResponseDto> Login(string email, string password)
-    {
-        var model = new LoginDto(email, password);
-        var response = await Client.PostAsync("api/auth/login", CreateContext(model));
-        return JsonConvert.DeserializeObject<LoginResponseDto>(await response.Content.ReadAsStringAsync())!;
     }
 }

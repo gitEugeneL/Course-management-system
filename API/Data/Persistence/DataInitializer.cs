@@ -8,7 +8,7 @@ public static class DataInitializer
 {
     public const string TestProfessorEmail = "professor@test.com";
     public const string TestStudentEmail = "student@test.com";
-    public const string TestPassword = "password";
+    public const string TestPassword = "passwordPassword";
     
     public static void Init(AppDbContext context)
     {
@@ -29,6 +29,14 @@ public static class DataInitializer
             TestProfessorEmail, hash, salt, Role.Professor, "40587", "Isabella", "Martinez");
 
         await context.Users.AddRangeAsync(student, professor);
+        
+        for (var i = 1; i <= 15; i++)
+        {
+            var course = new Course(
+                $"Course{i}", "some text", new Random().Next(1, 101), professor.Id);
+            await context.Courses.AddAsync(course);
+        }
+        
         await context.SaveChangesAsync();
     }
 

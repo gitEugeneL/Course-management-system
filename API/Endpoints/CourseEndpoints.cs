@@ -27,7 +27,7 @@ public static class CourseEndpoints
             .Produces<PaginatedResponse<CourseResponseDto>>();
         
         courseGroup.MapGet("{courseName}", GetCourseByName)
-            .RequireAuthorization("student-policy")
+            .RequireAuthorization()
             .Produces<CourseResponseDto>()
             .Produces(StatusCodes.Status404NotFound);
         
