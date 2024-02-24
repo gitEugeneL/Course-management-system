@@ -30,7 +30,7 @@ internal class CourseRepository(AppDbContext context) : ICourseRepository
                 .Equals(name.ToLower()));
     }
 
-    public async Task<Course?> GetCourseByName(string name)
+    public async Task<Course?> FindCourseByName(string name)
     {
         return await context
             .Courses
@@ -39,7 +39,7 @@ internal class CourseRepository(AppDbContext context) : ICourseRepository
                 .Equals(name.ToLower()));
     }
 
-    public async Task<Course?> GetCourseById(Guid id)
+    public async Task<Course?> FindCourseById(Guid id)
     {
         return await context
             .Courses
@@ -47,7 +47,7 @@ internal class CourseRepository(AppDbContext context) : ICourseRepository
             .SingleOrDefaultAsync(c => c.Id == id);
     }
     
-    public async Task<(IEnumerable<Course> List, int Count)> GetAllCoursesPagination(
+    public async Task<(IEnumerable<Course> List, int Count)> FindAllCoursesPagination(
         int pageNumber, 
         int pageSize, 
         bool sortByCreated = false,

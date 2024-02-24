@@ -76,7 +76,7 @@ public static class CourseEndpoints
         ICourseRepository repository)
     {
         var (courses, count) = await repository
-            .GetAllCoursesPagination(
+            .FindAllCoursesPagination(
                 parameters.PageNumber, 
                 parameters.PageSize, 
                 parameters.SortByCreated,
@@ -97,7 +97,7 @@ public static class CourseEndpoints
         [FromRoute] string courseName,
         ICourseRepository repository)
     {
-        var course = await repository.GetCourseByName(courseName);
+        var course = await repository.FindCourseByName(courseName);
         return course is not null
             ? TypedResults.Ok(new CourseResponseDto(course))
             : TypedResults.NotFound($"Course {courseName} not found");
@@ -107,7 +107,7 @@ public static class CourseEndpoints
         [FromBody] UpdateCourseDto dto,
         ICourseRepository repository)
     {
-        var course = await repository.GetCourseById(dto.CourseId);
+        var course = await repository.FindCourseById(dto.CourseId);
         if (course is null)
             return TypedResults.NotFound($"Course {dto.CourseId} not found");
         
@@ -123,7 +123,7 @@ public static class CourseEndpoints
         [FromRoute] string courseName,
         ICourseRepository repository)
     {
-        var course = await repository.GetCourseByName(courseName);
+        var course = await repository.FindCourseByName(courseName);
         if (course is null)
             return TypedResults.NotFound($"Course {courseName} not found");
 
@@ -137,7 +137,7 @@ public static class CourseEndpoints
         ICourseRepository courseRepository,
         IUserRepository userRepository)
     {
-        var course = await courseRepository.GetCourseByName(courseName);
+        var course = await courseRepository.FindCourseByName(courseName);
         if (course is null)
             return TypedResults.NotFound($"Course {courseName} not found");
 
@@ -163,7 +163,7 @@ public static class CourseEndpoints
         ICourseRepository courseRepository,
         IUserRepository userRepository)
     {
-        var course = await courseRepository.GetCourseByName(courseName);
+        var course = await courseRepository.FindCourseByName(courseName);
         if (course is null)
             return TypedResults.NotFound($"Course {courseName} not found");
         

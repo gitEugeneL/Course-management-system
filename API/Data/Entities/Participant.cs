@@ -4,8 +4,8 @@ namespace API.Data.Entities;
 
 public class Participant : BaseAuditableEntity
 {
-    public int Grade { get; init; }
-    public string ProfessorNote { get; init; } = string.Empty;
+    public int Grade { get; set; }
+    public string ProfessorNote { get; set; } = string.Empty;
     
     /*** Relations ***/
     public required User User { get; init; }

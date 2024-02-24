@@ -4,6 +4,7 @@ using API.Data.Enums;
 using API.Data.Persistence;
 using API.Dto.Auth;
 using API.Dto.Courses;
+using API.Dto.Participants;
 using API.Dto.Users;
 using API.Endpoints;
 using API.Repositories;
@@ -28,11 +29,13 @@ builder.Services
     .AddScoped<ITokenManager, TokenManager>()
     .AddScoped<IUserRepository, UserRepository>()
     .AddScoped<ICourseRepository, CourseRepository>()
+    .AddScoped<IParticipantRepository, ParticipantRepository>()
     .AddScoped<IValidator<LoginDto>, LoginValidator>()
     .AddScoped<IValidator<RefreshDto>, RefreshValidator>()
     .AddScoped<IValidator<CreateUserDto>, CreateUserValidator>()
     .AddScoped<IValidator<CreateCourseDto>, CreateCourseValidator>()
-    .AddScoped<IValidator<UpdateCourseDto>, UpdateCourseDtoValidator>();
+    .AddScoped<IValidator<UpdateCourseDto>, UpdateCourseDtoValidator>()
+    .AddScoped<IValidator<GradeParticipantDto>, GradeParticipantDtoValidator>();
 
 /*** Database connection ***/
 builder.Services.AddDbContext<AppDbContext>(options =>
@@ -102,6 +105,7 @@ app.UseSwaggerUI();
 app.MapAuthEndpoints();
 app.MapUserEndpoints();
 app.MapCourseEndpoints();
+app.MapParticipantEndpoints();
 
 app.UseHttpsRedirection();
 

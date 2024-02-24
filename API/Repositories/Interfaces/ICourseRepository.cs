@@ -10,11 +10,11 @@ public interface ICourseRepository
     
     Task<bool> CourseExist(string name);
 
-    Task<Course?> GetCourseByName(string name);
+    Task<Course?> FindCourseByName(string name);
 
-    Task<Course?> GetCourseById(Guid id);
+    Task<Course?> FindCourseById(Guid id);
 
-    Task<(IEnumerable<Course> List, int Count)> GetAllCoursesPagination(
+    Task<(IEnumerable<Course> List, int Count)> FindAllCoursesPagination(
         int pageNumber, 
         int pageSize, 
         bool sortByCreated = false, 
