@@ -36,10 +36,6 @@ public static class DataInitializer
                 $"Course{i}", "some text", new Random().Next(1, 101), professor.Id);
             await context.Courses.AddAsync(course);
         }
-        
         await context.SaveChangesAsync();
     }
-
-
-
 }

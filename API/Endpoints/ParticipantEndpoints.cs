@@ -22,11 +22,11 @@ public static class ParticipantEndpoints
 
         participantGroup.MapGet("", GetAllParticipantsByUser)
             .RequireAuthorization("student-policy")
-            .Produces<List<ParticipantResponseDto>>();
+            .Produces<ParticipantResponseDto>();
         
         participantGroup.MapGet("{courseName}", GetAllByCourseName)
             .RequireAuthorization()
-            .Produces<ParticipantResponseDto>()
+            .Produces<PaginatedResponse<ParticipantResponseDto>>()
             .Produces(StatusCodes.Status404NotFound);
     }
 
