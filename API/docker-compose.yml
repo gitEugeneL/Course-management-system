@@ -1,0 +1,41 @@
+version: "3.8"
+
+services:
+  
+  api.database:
+    container_name: api.database
+    image: postgres:latest
+    environment:
+      POSTGRES_DB: api
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5432:5432"
+    networks:
+      - api-network
+    volumes:
+      - api.database:/var/lib/postgresql/data:rw
+
+  api.app:
+    container_name: api.app
+    build: .
+    environment:
+      - "ASPNETCORE_ENVIRONMENT=Development"
+      - "ConnectionStrings__PSQL=Host=api.database;Port=5432;Database=api;Username=user;Password=password;"  
+    ports:
+      - "8000:8080"
+    depends_on:
+      - api.database
+    networks:
+      - api-network
+    deploy:
+      restart_policy:
+        condition: on-failure
+        max_attempts: 3
+
+networks:
+  api-network:
+    driver: bridge
+
+volumes:
+  api.database:

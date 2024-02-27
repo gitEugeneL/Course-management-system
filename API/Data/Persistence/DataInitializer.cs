@@ -18,7 +18,7 @@ public static class DataInitializer
         Seed(context);
     }
     
-    private static async void Seed(AppDbContext context)
+    private static void Seed(AppDbContext context)
     {
         var passwordManager = new PasswordManager();
         passwordManager.CreatePasswordHash(TestPassword, out var hash, out var salt);
@@ -28,14 +28,14 @@ public static class DataInitializer
         var professor = new User(
             TestProfessorEmail, hash, salt, Role.Professor, "40587", "Isabella", "Martinez");
 
-        await context.Users.AddRangeAsync(student, professor);
+        context.Users.AddRange(student, professor);
         
         for (var i = 1; i <= 15; i++)
         {
             var course = new Course(
                 $"Course{i}", "some text", new Random().Next(1, 101), professor.Id);
-            await context.Courses.AddAsync(course);
+            context.Courses.Add(course);
         }
-        await context.SaveChangesAsync();
+        context.SaveChanges();
     }
 }
