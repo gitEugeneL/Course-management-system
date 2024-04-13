@@ -1,6 +1,5 @@
-using System.Security.Claims;
+using System.Reflection;
 using System.Text;
-using API.Data.Enums;
 using API.Data.Persistence;
 using API.Dto.Auth;
 using API.Dto.Courses;
@@ -11,7 +10,9 @@ using API.Repositories;
 using API.Repositories.Interfaces;
 using API.Security;
 using API.Security.Interfaces;
+using Api.Utils;
 using API.Utils;
+using Asp.Versioning;
 using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
@@ -29,18 +30,14 @@ builder.Services
     .AddScoped<ITokenManager, TokenManager>()
     .AddScoped<IUserRepository, UserRepository>()
     .AddScoped<ICourseRepository, CourseRepository>()
-    .AddScoped<IParticipantRepository, ParticipantRepository>()
-    .AddScoped<IValidator<LoginDto>, LoginValidator>()
-    .AddScoped<IValidator<RefreshDto>, RefreshValidator>()
-    .AddScoped<IValidator<CreateUserDto>, CreateUserValidator>()
-    .AddScoped<IValidator<CreateCourseDto>, CreateCourseValidator>()
-    .AddScoped<IValidator<UpdateCourseDto>, UpdateCourseDtoValidator>()
-    .AddScoped<IValidator<GradeParticipantDto>, GradeParticipantDtoValidator>();
+    .AddScoped<IParticipantRepository, ParticipantRepository>();
+
+/*** FluentValidation files register ***/
+builder.Services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
 
 /*** Database connection ***/
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("PSQL")));    
-    // options.UseSqlite(builder.Configuration.GetConnectionString("SQLite")));
 
 /*** Swagger configuration ***/
 builder.Services.AddSwaggerGen(c =>
@@ -53,6 +50,21 @@ builder.Services.AddSwaggerGen(c =>
         Type = SecuritySchemeType.ApiKey
     });
     c.OperationFilter<SecurityRequirementsOperationFilter>();
+});
+
+/*** Api Versioning Config ***/
+builder.Services.AddApiVersioning(options =>
+{
+    options.DefaultApiVersion = new ApiVersion(1);
+    options.ReportApiVersions = true;
+    options.AssumeDefaultVersionWhenUnspecified = true;
+    options.ApiVersionReader = ApiVersionReader.Combine(
+        new UrlSegmentApiVersionReader(),
+        new HeaderApiVersionReader("X-Api-Version"));
+}).AddApiExplorer(options =>
+{
+    options.GroupNameFormat = "'v'V";
+    options.SubstituteApiVersionInUrl = true;
 });
 
 /*** JWT  auth configuration ***/
@@ -72,17 +84,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     });
 
 /*** Auth policies ***/
-builder.Services.AddAuthorizationBuilder()
-    .AddPolicy("professor-policy", policy =>
-        policy
-            .RequireRole(Role.Professor.ToString())
-            .RequireClaim(ClaimTypes.Email)
-            .RequireClaim(ClaimTypes.NameIdentifier))
-    .AddPolicy("student-policy", policy =>
-        policy
-            .RequireRole(Role.Student.ToString())
-            .RequireClaim(ClaimTypes.Email)
-            .RequireClaim(ClaimTypes.NameIdentifier));
+AuthPolicy.ConfigureAuthPolicy(builder.Services);
 
 /*** Global exception handler ***/
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
@@ -104,7 +106,6 @@ app.UseSwaggerUI();
 
 /*** Add Endpoints ***/
 app.MapAuthEndpoints();
-app.MapUserEndpoints();
 app.MapCourseEndpoints();
 app.MapParticipantEndpoints();
 

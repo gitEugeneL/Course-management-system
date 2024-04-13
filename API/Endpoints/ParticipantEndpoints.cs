@@ -1,6 +1,9 @@
+using API.Data.Entities;
 using API.Dto;
 using API.Dto.Participants;
+using Api.Helpers;
 using API.Repositories.Interfaces;
+using Api.Utils;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using API.Utils;
@@ -11,21 +14,23 @@ public static class ParticipantEndpoints
 {
     public static void MapParticipantEndpoints(this IEndpointRouteBuilder builder)
     {
-        var participantGroup = builder.MapGroup("api/participants")
-            .WithTags("Participants");
+        var participantGroup = builder.MapGroup("api/v{version:apiVersion}/participants")
+            .WithApiVersionSet(ApiVersioning.VersionSet(builder))
+            .MapToApiVersion(1)
+            .WithTags(nameof(Participant));
         
         participantGroup.MapPatch("", Grade)
-            .RequireAuthorization("professor-policy")
+            .RequireAuthorization(AppConstants.ProfessorPolicy)
             .WithValidator<GradeParticipantDto>()
             .Produces<ParticipantResponseDto>()
             .Produces(StatusCodes.Status404NotFound);
 
         participantGroup.MapGet("", GetAllParticipantsByUser)
-            .RequireAuthorization("student-policy")
+            .RequireAuthorization(AppConstants.StudentPolicy)
             .Produces<ParticipantResponseDto>();
         
         participantGroup.MapGet("{courseName}", GetAllByCourseName)
-            .RequireAuthorization()
+            .RequireAuthorization(AppConstants.BasePolicy)
             .Produces<PaginatedResponse<ParticipantResponseDto>>()
             .Produces(StatusCodes.Status404NotFound);
     }

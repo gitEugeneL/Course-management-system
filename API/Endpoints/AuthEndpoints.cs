@@ -4,6 +4,7 @@ using API.Dto.Auth;
 using API.Dto.Users;
 using API.Repositories.Interfaces;
 using API.Security.Interfaces;
+using Api.Utils;
 using API.Utils;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
@@ -14,7 +15,9 @@ public static class AuthEndpoints
 {
     public static void MapAuthEndpoints(this IEndpointRouteBuilder builder)
     {
-        var authGroup = builder.MapGroup("api/auth")
+        var authGroup = builder.MapGroup("api/v{version:apiVersion}/auth")
+            .WithApiVersionSet(ApiVersioning.VersionSet(builder))
+            .MapToApiVersion(1)
             .WithTags("Authentication");
 
         authGroup.MapPost("register", Register)

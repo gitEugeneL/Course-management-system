@@ -1,7 +1,9 @@
 using API.Data.Entities;
 using API.Dto;
 using API.Dto.Courses;
+using Api.Helpers;
 using API.Repositories.Interfaces;
+using Api.Utils;
 using Microsoft.AspNetCore.Mvc;
 using API.Utils;
 using Microsoft.AspNetCore.Http.HttpResults;
@@ -13,44 +15,46 @@ public static class CourseEndpoints
 {
     public static void MapCourseEndpoints(this IEndpointRouteBuilder builder)
     {
-        var courseGroup = builder.MapGroup("api/courses")
-            .WithTags("Courses");
-    
+        var courseGroup = builder.MapGroup("api/v{version:apiVersion}/courses")
+            .WithApiVersionSet(ApiVersioning.VersionSet(builder))
+            .MapToApiVersion(1)
+            .WithTags(nameof(Course));
+        
         courseGroup.MapPost("", CreateCourse)
-            .RequireAuthorization("professor-policy")
+            .RequireAuthorization(AppConstants.ProfessorPolicy)
             .WithValidator<CreateCourseDto>()
             .Produces<CourseResponseDto>(StatusCodes.Status201Created)
             .Produces(StatusCodes.Status409Conflict);
 
         courseGroup.MapGet("", GetAllCoursesPaginated)
-            .RequireAuthorization()
+            .RequireAuthorization(AppConstants.BasePolicy)
             .Produces<PaginatedResponse<CourseResponseDto>>();
         
         courseGroup.MapGet("{courseName}", GetCourseByName)
-            .RequireAuthorization()
+            .RequireAuthorization(AppConstants.BasePolicy)
             .Produces<CourseResponseDto>()
             .Produces(StatusCodes.Status404NotFound);
         
         courseGroup.MapPut("", UpdateCourse)
-            .RequireAuthorization("professor-policy")
+            .RequireAuthorization(AppConstants.ProfessorPolicy)
             .WithValidator<UpdateCourseDto>()
             .Produces<CourseResponseDto>()
             .Produces(StatusCodes.Status404NotFound);
 
         courseGroup.MapDelete("{courseName}", DeleteCourse)
-            .RequireAuthorization("professor-policy")
+            .RequireAuthorization(AppConstants.ProfessorPolicy)
             .Produces(StatusCodes.Status204NoContent)
             .Produces(StatusCodes.Status404NotFound);
 
         courseGroup.MapPatch("join/{courseName}", Join)
-            .RequireAuthorization("student-policy")
+            .RequireAuthorization(AppConstants.StudentPolicy)
             .Produces(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status404NotFound)
             .Produces(StatusCodes.Status409Conflict)
             .Produces(StatusCodes.Status401Unauthorized);
         
         courseGroup.MapPatch("leave/{courseName}", Leave)
-            .RequireAuthorization("student-policy")
+            .RequireAuthorization(AppConstants.StudentPolicy)
             .Produces(StatusCodes.Status404NotFound)
             .Produces(StatusCodes.Status401Unauthorized);
     }
