@@ -15,7 +15,7 @@ public class CourseEndpointsTests(WebApplicationFactory<Program> factory) : ICla
     private async Task<HttpResponseMessage> CreateTestCourse()
     {
         var model = new CreateCourseDto("Math", "Math course", 10);
-        return await _client.PostAsync("api/courses", TestCase.CreateContext(model));
+        return await _client.PostAsJsonAsync($"api/v{TestCase.ApiVersion}/courses", model);
     }
     
     [Theory]
@@ -31,7 +31,7 @@ public class CourseEndpointsTests(WebApplicationFactory<Program> factory) : ICla
         await TestCase.Login(_client, DataInitializer.TestProfessorEmail, DataInitializer.TestPassword);
         
         // act
-        var response = await _client.PostAsync("api/courses", TestCase.CreateContext(model));
+        var response = await _client.PostAsJsonAsync($"api/v{TestCase.ApiVersion}/courses", model);
         
         // assert
         response.StatusCode.Should().Be(HttpStatusCode.Created);
@@ -60,7 +60,7 @@ public class CourseEndpointsTests(WebApplicationFactory<Program> factory) : ICla
         var course = await TestCase.DeserializeResponse<CourseResponseDto>(createResponse);
         
         // act
-        var response = await _client.GetAsync($"api/courses/{course!.Name}");
+        var response = await _client.GetAsync($"api/v{TestCase.ApiVersion}/courses/{course!.Name}");
       
         // assert
         response.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -76,7 +76,7 @@ public class CourseEndpointsTests(WebApplicationFactory<Program> factory) : ICla
         await TestCase.Login(_client, DataInitializer.TestProfessorEmail, DataInitializer.TestPassword);
     
         // act
-        var response = await _client.GetAsync($"api/courses/invalid-course-name");
+        var response = await _client.GetAsync($"api/v{TestCase.ApiVersion}/courses/invalid-course-name");
     
         // assert
         response.StatusCode.Should().Be(HttpStatusCode.NotFound);
@@ -88,11 +88,11 @@ public class CourseEndpointsTests(WebApplicationFactory<Program> factory) : ICla
     public async Task GetAllGetAllCoursesPaginated_withValidRequest_ReturnsOkResult(int pageNumber, int pageSize)
     {
         // arrange
-        var queryParams = $"?pageNumber={pageNumber}&pageSize{pageSize}";
+        var queryParams = $"?pageNumber={pageNumber}&pageSize={pageSize}";
         await TestCase.Login(_client, DataInitializer.TestStudentEmail, DataInitializer.TestPassword);
         
         // act
-        var response = await _client.GetAsync($"api/courses{queryParams}");
+        var response = await _client.GetAsync($"api/v{TestCase.ApiVersion}/courses{queryParams}");
         
         // assert 
         response.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -111,7 +111,7 @@ public class CourseEndpointsTests(WebApplicationFactory<Program> factory) : ICla
         var updateModel = new UpdateCourseDto(course!.CourseId, null, null, true);
         
         // act
-        var response = await _client.PutAsync("api/courses", TestCase.CreateContext(updateModel));
+        var response = await _client.PutAsJsonAsync($"api/v{TestCase.ApiVersion}/courses", updateModel);
         
         // assert
         response.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -128,7 +128,7 @@ public class CourseEndpointsTests(WebApplicationFactory<Program> factory) : ICla
         var updateModel = new UpdateCourseDto(Guid.NewGuid(), null, 50, null);
         
         // act
-        var response = await _client.PutAsync("api/courses", TestCase.CreateContext(updateModel));
+        var response = await _client.PutAsJsonAsync($"api/v{TestCase.ApiVersion}/courses", updateModel);
     
         // assert
         response.StatusCode.Should().Be(HttpStatusCode.NotFound);
@@ -143,7 +143,7 @@ public class CourseEndpointsTests(WebApplicationFactory<Program> factory) : ICla
         var course = await TestCase.DeserializeResponse<CourseResponseDto>(createResponse);
         
         // act
-        var response = await _client.DeleteAsync($"api/courses/{course!.Name}");
+        var response = await _client.DeleteAsync($"api/v{TestCase.ApiVersion}/courses/{course!.Name}");
         
         // assert
         response.StatusCode.Should().Be(HttpStatusCode.NoContent);
@@ -156,7 +156,7 @@ public class CourseEndpointsTests(WebApplicationFactory<Program> factory) : ICla
         await TestCase.Login(_client, DataInitializer.TestProfessorEmail, DataInitializer.TestPassword);
         
         // act
-        var response = await _client.DeleteAsync($"api/courses/invalid-course-name");
+        var response = await _client.DeleteAsync($"api/v{TestCase.ApiVersion}/courses/invalid-course-name");
         
         // assert
         response.StatusCode.Should().Be(HttpStatusCode.NotFound);
@@ -172,7 +172,7 @@ public class CourseEndpointsTests(WebApplicationFactory<Program> factory) : ICla
         await TestCase.Login(_client, DataInitializer.TestStudentEmail, DataInitializer.TestPassword);
         
         // act
-        var response = await _client.PatchAsync($"api/courses/join/{course!.Name}", null);
+        var response = await _client.PatchAsync($"api/v{TestCase.ApiVersion}/courses/join/{course!.Name}", null);
         
         // assert
         response.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -190,7 +190,7 @@ public class CourseEndpointsTests(WebApplicationFactory<Program> factory) : ICla
         // act
         var response = new HttpResponseMessage();
         for (var i = 0; i < 2; i++)
-            response = await _client.PatchAsync($"api/courses/join/{course!.Name}", null);
+            response = await _client.PatchAsync($"api/v{TestCase.ApiVersion}/courses/join/{course!.Name}", null);
         
         // assert
         response.StatusCode.Should().Be(HttpStatusCode.Conflict);
@@ -203,7 +203,7 @@ public class CourseEndpointsTests(WebApplicationFactory<Program> factory) : ICla
         await TestCase.Login(_client, DataInitializer.TestStudentEmail, DataInitializer.TestPassword);
         
         // act
-        var response = await _client.PatchAsync($"api/courses/join/invalid-course-name", null);
+        var response = await _client.PatchAsync($"api/v{TestCase.ApiVersion}/courses/join/invalid-course-name", null);
         
         // assert
         response.StatusCode.Should().Be(HttpStatusCode.NotFound);
@@ -217,10 +217,10 @@ public class CourseEndpointsTests(WebApplicationFactory<Program> factory) : ICla
         var createResponse = await CreateTestCourse();
         var course = await TestCase.DeserializeResponse<CourseResponseDto>(createResponse);
         await TestCase.Login(_client, DataInitializer.TestStudentEmail, DataInitializer.TestPassword);
-        await _client.PatchAsync($"api/courses/join/{course!.Name}", null);
+        await _client.PatchAsync($"api/v{TestCase.ApiVersion}/courses/join/{course!.Name}", null);
         
         // act
-        var response = await _client.PatchAsync($"api/courses/leave/{course.Name}", null);
+        var response = await _client.PatchAsync($"api/v{TestCase.ApiVersion}/courses/leave/{course.Name}", null);
         
         // assert
         response.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -233,7 +233,7 @@ public class CourseEndpointsTests(WebApplicationFactory<Program> factory) : ICla
         await TestCase.Login(_client, DataInitializer.TestStudentEmail, DataInitializer.TestPassword);
         
         // act
-        var response = await _client.PatchAsync($"api/courses/leave/invalid-course-name", null);
+        var response = await _client.PatchAsync($"api/v{TestCase.ApiVersion}/courses/leave/invalid-course-name", null);
     
         // assert
         response.StatusCode.Should().Be(HttpStatusCode.NotFound);
@@ -249,7 +249,7 @@ public class CourseEndpointsTests(WebApplicationFactory<Program> factory) : ICla
         await TestCase.Login(_client, DataInitializer.TestStudentEmail, DataInitializer.TestPassword);
         
         // act
-        var response = await _client.PatchAsync($"api/courses/leave/{course!.Name}", null);
+        var response = await _client.PatchAsync($"api/v{TestCase.ApiVersion}/courses/leave/{course!.Name}", null);
         
         // assert
         response.StatusCode.Should().Be(HttpStatusCode.NotFound);

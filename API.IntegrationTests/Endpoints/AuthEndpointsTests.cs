@@ -23,7 +23,7 @@ public class AuthEndpointsTests(WebApplicationFactory<Program> factory) : IClass
         var model = new CreateUserDto(email, password, firstName, lastName, universityNumber);
 
         // act
-        var response = await _client.PostAsync("api/auth/register", TestCase.CreateContext(model));
+        var response = await _client.PostAsJsonAsync($"api/v{TestCase.ApiVersion}/auth/register", model);
         
         // assert
         response.StatusCode.Should().Be(HttpStatusCode.Created);
@@ -37,7 +37,7 @@ public class AuthEndpointsTests(WebApplicationFactory<Program> factory) : IClass
             DataInitializer.TestStudentEmail, "stringPwd", "test", "test", "4544");
         
         // act
-        var response = await _client.PostAsync("api/auth/register", TestCase.CreateContext(model));
+        var response = await _client.PostAsJsonAsync($"api/v{TestCase.ApiVersion}/auth/register", model);
         
         // assert
         response.StatusCode.Should().Be(HttpStatusCode.Conflict);
@@ -50,7 +50,7 @@ public class AuthEndpointsTests(WebApplicationFactory<Program> factory) : IClass
         var model = new LoginDto(DataInitializer.TestStudentEmail, DataInitializer.TestPassword);
         
         // act
-        var response = await _client.PostAsync("api/auth/login", TestCase.CreateContext(model));
+        var response = await _client.PostAsJsonAsync($"api/v{TestCase.ApiVersion}/auth/login", model);
         
         // assert
         response.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -65,7 +65,7 @@ public class AuthEndpointsTests(WebApplicationFactory<Program> factory) : IClass
         var model = new LoginDto(email, password);
         
         // act
-        var response = await _client.PostAsync("api/auth/login", TestCase.CreateContext(model));
+        var response = await _client.PostAsJsonAsync($"api/v{TestCase.ApiVersion}/auth/login", model);
         
         // assert
         response.StatusCode.Should().Be(HttpStatusCode.NotFound);
@@ -79,7 +79,7 @@ public class AuthEndpointsTests(WebApplicationFactory<Program> factory) : IClass
         var model = new RefreshDto(loginResponse.RefreshToken);
         
         // act
-        var response = await _client.PostAsync("api/auth/refresh", TestCase.CreateContext(model));
+        var response = await _client.PostAsJsonAsync($"api/v{TestCase.ApiVersion}/auth/refresh", model);
         
         // assert
         response.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -92,7 +92,7 @@ public class AuthEndpointsTests(WebApplicationFactory<Program> factory) : IClass
         var model = new RefreshDto(Convert.ToBase64String(RandomNumberGenerator.GetBytes(256)));
         
         // act
-        var response = await _client.PostAsync("api/auth/refresh", TestCase.CreateContext(model));
+        var response = await _client.PostAsJsonAsync($"api/v{TestCase.ApiVersion}/auth/refresh", model);
         
         // assert
         response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
@@ -106,7 +106,7 @@ public class AuthEndpointsTests(WebApplicationFactory<Program> factory) : IClass
         var model = new RefreshDto(loginResponse.RefreshToken);
         
         // act
-        var response = await _client.PostAsync("api/auth/logout", TestCase.CreateContext(model));
+        var response = await _client.PostAsJsonAsync($"api/v{TestCase.ApiVersion}/auth/logout", model);
         
         // assert
         response.StatusCode.Should().Be(HttpStatusCode.NoContent);
@@ -119,7 +119,7 @@ public class AuthEndpointsTests(WebApplicationFactory<Program> factory) : IClass
         var model = new RefreshDto(Convert.ToBase64String(RandomNumberGenerator.GetBytes(256)));
         
         // act
-        var response = await _client.PostAsync("api/auth/logout", TestCase.CreateContext(model));
+        var response = await _client.PostAsJsonAsync($"api/v{TestCase.ApiVersion}/auth/logout", model);
         
         // assert
         response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);

@@ -9,6 +9,14 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "API.IntegrationTests", "API
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Api.Tests", "Api.Tests\Api.Tests.csproj", "{DDC6453B-2A06-4D08-A8D5-D399D8CA1649}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{EA64BE2F-D862-4CD1-8AB9-C788DA85D3C3}"
+	ProjectSection(SolutionItems) = preProject
+		API\Dockerfile = API\Dockerfile
+		API\docker-compose.yml = API\docker-compose.yml
+		API\Makefile = API\Makefile
+		API\swagger.json = API\swagger.json
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

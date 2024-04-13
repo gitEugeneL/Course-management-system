@@ -1,5 +1,4 @@
 using System.Net.Http.Headers;
-using System.Text;
 using API.Data.Persistence;
 using API.Dto.Auth;
 using Microsoft.AspNetCore.Mvc.Testing;
@@ -10,6 +9,8 @@ namespace API.IntegrationTests;
 
 public static class TestCase
 {
+    public const int ApiVersion = 1;
+    
     public static HttpClient CreateTestHttpClient(WebApplicationFactory<Program> factory, string dbname)
     {
         return factory
@@ -36,17 +37,11 @@ public static class TestCase
     public static async Task<LoginResponseDto> Login(HttpClient client, string email, string password)
     {
         var model = new LoginDto(email, password);
-        var response = await client.PostAsync("api/auth/login", CreateContext(model));
+        var response = await client.PostAsJsonAsync($"api/v{ApiVersion}/auth/login", model);
         var loginResponse = JsonConvert.DeserializeObject<LoginResponseDto>(await response.Content.ReadAsStringAsync())!;
 
         client.DefaultRequestHeaders.Authorization = 
             new AuthenticationHeaderValue("Bearer", loginResponse.AccessToken);
         return loginResponse;
-    }
-    
-    public static StringContent CreateContext(object o)
-    {
-        return new StringContent(
-            JsonConvert.SerializeObject(o), Encoding.UTF8, "application/json");
     }
 }

@@ -18,14 +18,14 @@ public class ParticipantEndpointsTests(WebApplicationFactory<Program> factory) :
     {
         await TestCase.Login(_client, DataInitializer.TestProfessorEmail, DataInitializer.TestPassword);
         var courseModel = new CreateCourseDto(name, "some text", countUsers);
-        var courseResponse = await _client.PostAsync("api/courses", TestCase.CreateContext(courseModel));
+        var courseResponse = await _client.PostAsJsonAsync($"api/v{TestCase.ApiVersion}/courses", courseModel);
         return await TestCase.DeserializeResponse<CourseResponseDto>(courseResponse);
     }
 
     private async Task<UserResponseDto?> CreateUser(string email, string password)
     {
         var userModel = new CreateUserDto(email, password, "user", "user", "-");
-        var userResponse = await _client.PostAsync("api/auth/register", TestCase.CreateContext(userModel));
+        var userResponse = await _client.PostAsJsonAsync($"api/v{TestCase.ApiVersion}/auth/register", userModel);
         return await TestCase.DeserializeResponse<UserResponseDto>(userResponse);
     }
     
@@ -44,13 +44,13 @@ public class ParticipantEndpointsTests(WebApplicationFactory<Program> factory) :
         var course = await CreateCourse("testCourse");
         // join user to the course
         await TestCase.Login(_client, email, password);
-        await _client.PatchAsync($"api/courses/join/{course!.Name}", null);
+        await _client.PatchAsync($"api/v{TestCase.ApiVersion}/courses/join/{course!.Name}", null);
         // grade model
         var gradeModel = new GradeParticipantDto(user!.UserId, course.CourseId, grade, note);
         await TestCase.Login(_client, DataInitializer.TestProfessorEmail, DataInitializer.TestPassword);
         
         // act
-        var response = await _client.PatchAsync("api/participants", TestCase.CreateContext(gradeModel));
+        var response = await _client.PatchAsJsonAsync($"api/v{TestCase.ApiVersion}/participants", gradeModel);
         var updatedParticipant = await TestCase.DeserializeResponse<ParticipantResponseDto>(response);
         
         // assert
@@ -71,7 +71,7 @@ public class ParticipantEndpointsTests(WebApplicationFactory<Program> factory) :
         var gradeModel = new GradeParticipantDto(user!.UserId, Guid.NewGuid(), 5, "some text");
 
         // act
-        var response = await _client.PatchAsync("api/participants", TestCase.CreateContext(gradeModel));
+        var response = await _client.PatchAsJsonAsync($"api/v{TestCase.ApiVersion}/participants", gradeModel);
         
         // assert
         response.StatusCode.Should().Be(HttpStatusCode.NotFound);
@@ -93,13 +93,13 @@ public class ParticipantEndpointsTests(WebApplicationFactory<Program> factory) :
             await CreateUser(email, password);
             // join user to the course
             await TestCase.Login(_client, email, password);
-            await _client.PatchAsync($"api/courses/join/{course!.Name}", null);
+            await _client.PatchAsync($"api/v{TestCase.ApiVersion}/courses/join/{course!.Name}", null);
         }
         await TestCase.Login(_client, DataInitializer.TestProfessorEmail, DataInitializer.TestPassword);
         
         // act
         var queryParams = $"?pageNumber={pageNumber}&pageSize={pageSize}";
-        var response = await _client.GetAsync($"api/participants/{course!.Name}{queryParams}");
+        var response = await _client.GetAsync($"api/v{TestCase.ApiVersion}/participants/{course!.Name}{queryParams}");
         var data = await TestCase.DeserializeResponse<PaginatedResponse<ParticipantResponseDto>>(response);
         
         // assert
@@ -115,7 +115,7 @@ public class ParticipantEndpointsTests(WebApplicationFactory<Program> factory) :
         await TestCase.Login(_client, DataInitializer.TestProfessorEmail, DataInitializer.TestPassword);
         
         // act
-        var response = await _client.GetAsync($"api/participants/invalid-course-name");
+        var response = await _client.GetAsync($"api/v{TestCase.ApiVersion}/participants/invalid-course-name");
         
         // asser
         response.StatusCode.Should().Be(HttpStatusCode.NotFound);
@@ -136,11 +136,11 @@ public class ParticipantEndpointsTests(WebApplicationFactory<Program> factory) :
             var course = await CreateCourse($"testCourse{i}");
             // join user to the course
             await TestCase.Login(_client, email, password);
-            await _client.PatchAsync($"api/courses/join/{course!.Name}", null);
+            await _client.PatchAsync($"api/v{TestCase.ApiVersion}/courses/join/{course!.Name}", null);
         }
         
         // act
-        var response = await _client.GetAsync("api/participants");
+        var response = await _client.GetAsync($"api/v{TestCase.ApiVersion}/participants");
 
         // assert
         var data = await TestCase.DeserializeResponse<List<ParticipantResponseDto>>(response);
