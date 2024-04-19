@@ -3,8 +3,6 @@ version: "3.8"
 services:
   
   api.database:
-    container_name: api.database
-    image: postgres:latest
     environment:
       POSTGRES_DB: api
       POSTGRES_USER: user
@@ -17,8 +15,6 @@ services:
       - api.database:/var/lib/postgresql/data:rw
 
   api.app:
-    container_name: api.app
-    build: .
     environment:
       - "ASPNETCORE_ENVIRONMENT=Development"
       - "ConnectionStrings__PSQL=Host=api.database;Port=5432;Database=api;Username=user;Password=password;"  

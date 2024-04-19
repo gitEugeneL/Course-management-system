@@ -1,0 +1,13 @@
+version: "3.8"
+
+services:
+  
+  api.database:
+    container_name: api.database
+    image: postgres:latest
+
+  api.app:
+    container_name: api.app
+    build: 
+      context: .
+      dockerfile: API/Dockerfile
