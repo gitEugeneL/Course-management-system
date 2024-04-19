@@ -59,9 +59,9 @@ The project implements minimal api with api versioning, repository pattern, cust
 
         http://localhost:8000/swagger/index.html
 
-2. Swagger static file
+2. [Swagger static file](https://github.com/gitEugeneL/Course-management-system/blob/dev/swagger.json)
 
-        [swagger static file](https://github.com/gitEugeneL/Course-management-system/blob/dev/swagger.json)
+         https://github.com/gitEugeneL/Course-management-system/blob/dev/swagger.json
 
 
 ## 🔧 Implementation features
