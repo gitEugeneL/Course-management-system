@@ -27,7 +27,7 @@ public static class ParticipantEndpoints
 
         participantGroup.MapGet("", GetAllParticipantsByUser)
             .RequireAuthorization(AppConstants.StudentPolicy)
-            .Produces<ParticipantResponseDto>();
+            .Produces<List<ParticipantResponseDto>>();
         
         participantGroup.MapGet("{courseName}", GetAllByCourseName)
             .RequireAuthorization(AppConstants.BasePolicy)

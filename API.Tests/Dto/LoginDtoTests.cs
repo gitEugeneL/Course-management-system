@@ -2,7 +2,7 @@ using API.Dto.Auth;
 using FluentValidation.TestHelper;
 using Xunit;
 
-namespace Api.Tests.Dto;
+namespace API.Tests.Dto;
 
 public class LoginDtoTests
 {

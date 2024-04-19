@@ -2,7 +2,7 @@ using API.Dto.Courses;
 using FluentValidation.TestHelper;
 using Xunit;
 
-namespace Api.Tests.Dto;
+namespace API.Tests.Dto;
 
 public class CreateCourseDtoTests
 {
